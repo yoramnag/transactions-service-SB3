@@ -17,11 +17,8 @@ public class Transactions {
 
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	@Column(name="id")
-	private int id;
-
-	@Column(name="transactions_Id")
-	private int transactionsId;
+	@Column(name="transaction_Id")
+	private int transactionId;
 	
 	@Column(name="credit_card")
 	private String creditCard;
