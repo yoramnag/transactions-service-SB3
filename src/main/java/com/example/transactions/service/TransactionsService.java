@@ -34,4 +34,12 @@ public class TransactionsService {
         }
         return transaction;
     }
+
+    public void deleteTransactionByTransactionId(int transactionId){
+        Optional<Transactions> transaction = transactionsRepository.findById(transactionId);
+        if(!transaction.isPresent()){
+            throw new TransactionNotFoundException("transaction", "transaction ID" , String.valueOf(transactionId));
+        }
+        transactionsRepository.deleteById(transactionId);
+    }
 }

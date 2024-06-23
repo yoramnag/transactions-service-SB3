@@ -1,15 +1,14 @@
 package com.example.transactions.rest;
 
+import com.example.transactions.constants.TransactionsConstants;
+import com.example.transactions.dto.ResponseDto;
 import com.example.transactions.entity.Transactions;
 import com.example.transactions.service.TransactionsService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,5 +30,13 @@ public class TransactionsRestController {
     public ResponseEntity<Optional<Transactions>> getTransactionByTransactionId(@RequestParam int transactionId){
         Optional<Transactions> transaction = transactionsService.findTransactionByTransactionId(transactionId);
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
+    }
+
+    @DeleteMapping("/deleteTransaction")
+    public ResponseEntity<ResponseDto> deleteTransactionByTransactionId(@RequestParam int transactionId){
+        transactionsService.deleteTransactionByTransactionId(transactionId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDto(TransactionsConstants.STATUS_200,TransactionsConstants.MESSAGE_200));
     }
 }
