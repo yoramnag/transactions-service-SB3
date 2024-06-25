@@ -32,6 +32,14 @@ public class TransactionsRestController {
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
+    @PostMapping("/saveTransaction")
+    public ResponseEntity<ResponseDto> createTransaction(@RequestBody Transactions transaction){
+        transactionsService.saveTransaction(transaction);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ResponseDto(TransactionsConstants.STATUS_201,TransactionsConstants.MESSAGE_201));
+    }
+
     @DeleteMapping("/deleteTransaction")
     public ResponseEntity<ResponseDto> deleteTransactionByTransactionId(@RequestParam int transactionId){
         transactionsService.deleteTransactionByTransactionId(transactionId);
