@@ -1,5 +1,6 @@
 package com.example.transactions.service;
 
+import com.example.transactions.dto.BlackListDto;
 import com.example.transactions.entity.Transactions;
 import com.example.transactions.exception.FraudException;
 import com.example.transactions.exception.LuhnException;
@@ -19,6 +20,10 @@ public class TransactionsService {
     private TransactionsRepository transactionsRepository;
 
     BlackListProxy blackListProxy;
+
+    private static final int MAX_TRANSACTION_PER_A_DAY = 5;
+    private static final double MAX_AMOUNT_PER_A_DAY = 3000;
+
 
     /**
      * get all records from transactions table
@@ -48,12 +53,46 @@ public class TransactionsService {
         checkLuhnValidetor(transaction);
         transaction.setDate(LocalDateTime.now());
         checkForFraud(transaction);
+        transaction.setMaskCreditCard(Utils.mask(transaction.getCreditCard()));
+        transaction.setCreditCard(Utils.maskCreditCard(transaction.getCreditCard()));
+        transactionsRepository.save(transaction);
     }
 
     private void checkForFraud(Transactions transaction) {
         checkForBlackList(transaction.getCreditCard());
         List<Transactions> transactionsToday = findByCreditCardAndDate(transaction);
-        System.out.println(transactionsToday);
+        checkTransactionsPerADay(transactionsToday,transaction);
+        checkAmountPerADay(transaction, transactionsToday);
+    }
+
+    private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday) {
+        double sum = 0;
+        if(transaction.getAmount() >= MAX_AMOUNT_PER_A_DAY) {
+            addCardToBlalList(transaction.getCreditCard());
+            throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
+        }
+        if(transactionsToday.size() > 0) {
+            for (int i = 0; i < transactionsToday.size(); i++) {
+                sum = sum + transactionsToday.get(i).getAmount();
+            }
+            if (sum >= MAX_AMOUNT_PER_A_DAY) {
+                addCardToBlalList(transaction.getCreditCard());
+                throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
+            }
+        }
+    }
+
+    private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction) {
+        if(transactionsToday.size()+1 > MAX_TRANSACTION_PER_A_DAY) {
+            addCardToBlalList(transaction.getCreditCard());
+            throw new FraudException("transactions is not valid , card passed his max transactions per a day  ");
+        }
+    }
+
+    private void addCardToBlalList(String creditCardNumber) {
+        BlackListDto blackListDto = new BlackListDto();
+        blackListDto.setCreditCard(creditCardNumber);
+        blackListProxy.createBlackListCard(blackListDto);
     }
 
     private List<Transactions> findByCreditCardAndDate(Transactions transaction) {
