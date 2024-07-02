@@ -52,7 +52,7 @@ public class TransactionsService {
      */
     public void saveTransaction(Transactions transaction){
         checkLuhnValidetor(transaction);
-        transaction.setDate(LocalDateTime.now());
+//        transaction.setDate(LocalDateTime.now());
         checkForFraud(transaction);
         transaction.setMaskCreditCard(Utils.mask(transaction.getCreditCard()));
         transaction.setCreditCard(Utils.maskCreditCard(transaction.getCreditCard()));

@@ -4,6 +4,8 @@ package com.example.transactions.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Transactions {
 
 	@Id
@@ -27,7 +30,7 @@ public class Transactions {
 	@DecimalMin(value = "1.0", message = "amount should be greater than 1")
 	private double amount ;
 
-//	@Temporal(TemporalType.DATE)
+	@CreatedDate
 	private LocalDateTime date;
 	
 	@Column(name="mask_credit_card")
