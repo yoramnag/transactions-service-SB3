@@ -101,10 +101,9 @@ public class TransactionsRestController {
     }
     )
     @GetMapping("/getTransaction")
-    public ResponseEntity<Optional<Transactions>> getTransactionByTransactionId(@RequestParam
-                                                                                    @Pattern(regexp = "(^$|[0-9])", message = "transactionId must be only digits")
-                                                                                    int transactionId){
-        Optional<Transactions> transaction = transactionsService.findTransactionByTransactionId(transactionId);
+    public ResponseEntity<Optional<Transactions>> getTransactionByTransactionId(
+            @RequestParam @Pattern(regexp = "^[0-9]*$", message = "transactionId must be only digits") String transactionId){
+        Optional<Transactions> transaction = transactionsService.findTransactionByTransactionId(Integer.parseInt(transactionId));
         return ResponseEntity.status(HttpStatus.OK).body(transaction);
     }
 
@@ -185,9 +184,9 @@ public class TransactionsRestController {
     )
     @DeleteMapping("/deleteTransaction")
     public ResponseEntity<ResponseDto> deleteTransactionByTransactionId(@RequestParam
-                                                                            @Pattern(regexp = "(^$|[0-9])", message = "transactionId must be only digits")
-                                                                            int transactionId){
-        transactionsService.deleteTransactionByTransactionId(transactionId);
+                                                                            @Pattern(regexp = "^[0-9]*$", message = "transactionId must be only digits")
+                                                                            String transactionId){
+        transactionsService.deleteTransactionByTransactionId(Integer.parseInt(transactionId));
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto(TransactionsConstants.STATUS_200,TransactionsConstants.MESSAGE_200));

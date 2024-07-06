@@ -9,6 +9,7 @@ import com.example.transactions.repository.TransactionsRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -120,7 +121,7 @@ public class TransactionsService {
      */
     private List<Transactions> findByCreditCardAndDate(Transactions transaction) {
         String creditCardNumber = Utils.maskCreditCard(transaction.getCreditCard());
-        return transactionsRepository.findByCreditCardAndDate(creditCardNumber, transaction.getDate());
+        return transactionsRepository.findByCreditCardAndDate(creditCardNumber, LocalDateTime.now());
     }
 
     /**
