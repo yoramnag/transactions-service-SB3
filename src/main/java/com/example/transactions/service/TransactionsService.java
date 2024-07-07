@@ -81,10 +81,11 @@ public class TransactionsService {
             addCardToBlackList(transaction.getCreditCard());
             throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
         }
-        if(transactionsToday.size() > 0) {
+        if(!transactionsToday.isEmpty()) {
             for (int i = 0; i < transactionsToday.size(); i++) {
                 sum = sum + transactionsToday.get(i).getAmount();
             }
+            sum = sum + transaction.getAmount();
             if (sum >= MAX_AMOUNT_PER_A_DAY) {
                 addCardToBlackList(transaction.getCreditCard());
                 throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
@@ -100,7 +101,7 @@ public class TransactionsService {
     private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction) {
         if(transactionsToday.size()+1 > MAX_TRANSACTION_PER_A_DAY) {
             addCardToBlackList(transaction.getCreditCard());
-            throw new FraudException("transactions is not valid , card passed his max transactions per a day  ");
+            throw new FraudException("transactions is not valid , card passed his max transactions per a day");
         }
     }
 
@@ -121,7 +122,7 @@ public class TransactionsService {
      */
     private List<Transactions> findByCreditCardAndDate(Transactions transaction) {
         String creditCardNumber = Utils.maskCreditCard(transaction.getCreditCard());
-        return transactionsRepository.findByCreditCardAndDate(creditCardNumber, LocalDateTime.now());
+        return transactionsRepository.findByCreditCardAndDate(creditCardNumber,LocalDate.now());
     }
 
     /**

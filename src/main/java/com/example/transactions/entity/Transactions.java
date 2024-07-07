@@ -10,6 +10,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -55,7 +56,7 @@ public class Transactions {
 			description = "current date and time for the transaction",
 			example = "2024-07-04 19:57:24.513132"
 	)
-	private LocalDateTime date;
+	private LocalDate date;
 	
 	@Column(name="mask_credit_card")
 	@Schema(
