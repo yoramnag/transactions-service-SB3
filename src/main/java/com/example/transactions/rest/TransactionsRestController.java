@@ -33,7 +33,7 @@ import java.util.Optional;
 @Validated
 public class TransactionsRestController {
 
-    TransactionsService transactionsService;
+    private TransactionsService transactionsService;
 
     /**
      * get all records from transactions table
