@@ -99,6 +99,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<docker>
+						<host>//./pipe/dockerDesktopLinuxEngine</host>
+					</docker>
+					<image>
+						<name>yoramnagdocker/transactions:${project.version}</name>
+					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
