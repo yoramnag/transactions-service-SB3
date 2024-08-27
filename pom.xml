@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>transactions-SB3</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>transactions-service</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>transactions</name>
 	<description>microservice for transactions</description>
@@ -103,7 +103,7 @@
 						<host>//./pipe/dockerDesktopLinuxEngine</host>
 					</docker>
 					<image>
-						<name>yoramnagdocker/transactions:${project.version}</name>
+						<name>yoramnagdocker/${project.artifactId}:${project.version}</name>
 					</image>
 					<excludes>
 						<exclude>
