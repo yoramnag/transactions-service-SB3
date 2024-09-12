@@ -37,8 +37,8 @@ public class TransactionsRestController {
 
     private TransactionsService transactionsService;
 
-    @Autowired
-    private TransactionsInfoDto transactionsInfoDto;
+//    @Autowired
+//    private TransactionsInfoDto transactionsInfoDto;
 
     /**
      * get all records from transactions table
@@ -197,28 +197,28 @@ public class TransactionsRestController {
                 .body(new ResponseDto(TransactionsConstants.STATUS_200,TransactionsConstants.MESSAGE_200));
     }
 
-    @Operation(
-            summary = "Get transactions Info",
-            description = "transactions Info details that can be reached out in case of any issues"
-    )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "HTTP Status OK"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "HTTP Status Internal Server Error",
-                    content = @Content(
-                            schema = @Schema(implementation = ErrorResponseDto.class)
-                    )
-            )
-    }
-    )
-    @GetMapping("/transactions-info")
-    public ResponseEntity<TransactionsInfoDto> getTransactionsInfoDto() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(transactionsInfoDto);
-    }
+//    @Operation(
+//            summary = "Get transactions Info",
+//            description = "transactions Info details that can be reached out in case of any issues"
+//    )
+//    @ApiResponses({
+//            @ApiResponse(
+//                    responseCode = "200",
+//                    description = "HTTP Status OK"
+//            ),
+//            @ApiResponse(
+//                    responseCode = "500",
+//                    description = "HTTP Status Internal Server Error",
+//                    content = @Content(
+//                            schema = @Schema(implementation = ErrorResponseDto.class)
+//                    )
+//            )
+//    }
+//    )
+//    @GetMapping("/transactions-info")
+//    public ResponseEntity<TransactionsInfoDto> getTransactionsInfoDto() {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(transactionsInfoDto);
+//    }
 }
