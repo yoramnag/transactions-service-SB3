@@ -77,7 +77,7 @@ public class TransactionsService {
      */
     private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday) {
         double sum = 0;
-        if(transaction.getAmount() >= transactionsInfoDto.maxAmountPerADay()) {
+        if(transaction.getAmount() >= transactionsInfoDto.getMaxAmountPerADay()) {
             addCardToBlackList(transaction.getCreditCard());
             throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
         }
@@ -86,7 +86,7 @@ public class TransactionsService {
                 sum = sum + transactionsToday.get(i).getAmount();
             }
             sum = sum + transaction.getAmount();
-            if (sum >= transactionsInfoDto.maxAmountPerADay()) {
+            if (sum >= transactionsInfoDto.getMaxAmountPerADay()) {
                 addCardToBlackList(transaction.getCreditCard());
                 throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
             }
@@ -99,7 +99,7 @@ public class TransactionsService {
      * @param transaction to be checked
      */
     private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction) {
-        if(transactionsToday.size()+1 > transactionsInfoDto.maxTrsnsactionsPerADAy()) {
+        if(transactionsToday.size()+1 > transactionsInfoDto.getMaxTrsnsactionsPerADAy()) {
             addCardToBlackList(transaction.getCreditCard());
             throw new FraudException("transactions is not valid , card passed his max transactions per a day");
         }
