@@ -8,7 +8,6 @@ import com.example.transactions.exception.LuhnException;
 import com.example.transactions.exception.TransactionNotFoundException;
 import com.example.transactions.repository.TransactionsRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,8 +22,8 @@ public class TransactionsService {
 
     BlackListProxy blackListProxy;
 
-    @Autowired
-    private TransactionsInfoDto transactionsInfoDto;
+//    @Autowired
+//    private TransactionsInfoDto transactionsInfoDto;
 
     /**
      * get all records from transactions table
@@ -49,11 +48,13 @@ public class TransactionsService {
 
     /**
      * add new transaction to transactions table
-     * @param transaction to add
+     *
+     * @param transaction         to add
+     * @param transactionsInfoDto
      */
-    public void saveTransaction(Transactions transaction){
+    public void saveTransaction(Transactions transaction, TransactionsInfoDto transactionsInfoDto){
         checkLuhnValidetor(transaction);
-        checkForFraud(transaction);
+        checkForFraud(transaction,transactionsInfoDto);
         transaction.setMaskCreditCard(Utils.mask(transaction.getCreditCard()));
         transaction.setCreditCard(Utils.maskCreditCard(transaction.getCreditCard()));
         transactionsRepository.save(transaction);
@@ -61,21 +62,25 @@ public class TransactionsService {
 
     /**
      * check for fraud
-     * @param transaction to check
+     *
+     * @param transaction         to check
+     * @param transactionsInfoDto
      */
-    private void checkForFraud(Transactions transaction) {
+    private void checkForFraud(Transactions transaction, TransactionsInfoDto transactionsInfoDto) {
         checkForBlackList(transaction.getCreditCard());
         List<Transactions> transactionsToday = findByCreditCardAndDate(transaction);
-        checkTransactionsPerADay(transactionsToday,transaction);
-        checkAmountPerADay(transaction, transactionsToday);
+        checkTransactionsPerADay(transactionsToday,transaction,transactionsInfoDto);
+        checkAmountPerADay(transaction, transactionsToday,transactionsInfoDto);
     }
 
     /**
      * check if the transaction didn't pass the max amount allowed per a day
-     * @param transaction to be checked
-     * @param transactionsToday a list aof all transactions for a specific day
+     *
+     * @param transaction         to be checked
+     * @param transactionsToday   a list aof all transactions for a specific day
+     * @param transactionsInfoDto
      */
-    private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday) {
+    private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday, TransactionsInfoDto transactionsInfoDto) {
         double sum = 0;
         if(transaction.getAmount() >= transactionsInfoDto.getMaxAmountPerADay()) {
             addCardToBlackList(transaction.getCreditCard());
@@ -95,10 +100,12 @@ public class TransactionsService {
 
     /**
      * sum the number of transactions and check if it passed the maxTrsnsactionsPerADAy
-     * @param transactionsToday  a list aof all transactions for a specific day
-     * @param transaction to be checked
+     *
+     * @param transactionsToday   a list aof all transactions for a specific day
+     * @param transaction         to be checked
+     * @param transactionsInfoDto
      */
-    private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction) {
+    private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction, TransactionsInfoDto transactionsInfoDto) {
         if(transactionsToday.size()+1 > transactionsInfoDto.getMaxTrsnsactionsPerADAy()) {
             addCardToBlackList(transaction.getCreditCard());
             throw new FraudException("transactions is not valid , card passed his max transactions per a day");
