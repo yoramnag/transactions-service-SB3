@@ -106,19 +106,29 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+<!--				<configuration>-->
+<!--					<docker>-->
+<!--						<host>//./pipe/dockerDesktopLinuxEngine</host>-->
+<!--					</docker>-->
+<!--					<image>-->
+<!--						<name>yoramnagdocker/${project.artifactId}:${project.version}</name>-->
+<!--					</image>-->
+<!--					<excludes>-->
+<!--						<exclude>-->
+<!--							<groupId>org.projectlombok</groupId>-->
+<!--							<artifactId>lombok</artifactId>-->
+<!--						</exclude>-->
+<!--					</excludes>-->
+<!--				</configuration>-->
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>3.4.1</version>
 				<configuration>
-					<docker>
-						<host>//./pipe/dockerDesktopLinuxEngine</host>
-					</docker>
-					<image>
-						<name>yoramnagdocker/${project.artifactId}:${project.version}</name>
-					</image>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<to>
+						<image>yoramnagdocker/${project.artifactId}:${project.version}</image>
+					</to>
 				</configuration>
 			</plugin>
 		</plugins>
