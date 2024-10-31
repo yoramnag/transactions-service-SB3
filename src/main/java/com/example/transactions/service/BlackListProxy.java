@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface BlackListProxy {
 
     @GetMapping("api/checkBlacklist")
-    public boolean checkIfCreditCradAllReadyExist(@RequestParam
-                                                              @Pattern(regexp = "(^$|[0-9]{16})", message = "credit card must be 16 digits")
-                                                              String creditCardNumber);
+    public boolean checkIfCreditCradAllReadyExist(@RequestParam String creditCardNumber);
 
     @PostMapping("api/createBlacklist")
-    public ResponseEntity<ResponseDto> createBlackListCard(@Valid @RequestBody BlackListDto blackListDto);
+    public ResponseEntity<ResponseDto> createBlackListCard(@RequestBody BlackListDto blackListDto);
 }
