@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,6 +41,8 @@ public class TransactionsRestController {
 
     @Autowired
     private TransactionsInfoDto transactionsInfoDto;
+
+    private static final Logger logger = LoggerFactory.getLogger(TransactionsRestController.class);
 
     /**
      * get all records from transactions table
@@ -143,8 +147,10 @@ public class TransactionsRestController {
     }
     )
     @PostMapping("/saveTransaction")
-    public ResponseEntity<ResponseDto> createTransaction(@Valid @RequestBody Transactions transaction){
-        transactionsService.saveTransaction(transaction,transactionsInfoDto);
+    public ResponseEntity<ResponseDto> createTransaction(@RequestHeader("creditCard-correlation-id") String correlationId,
+                                                         @Valid @RequestBody Transactions transaction){
+        logger.debug("creditCard-correlation-id found {}",correlationId);
+        transactionsService.saveTransaction(transaction,transactionsInfoDto,correlationId);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(TransactionsConstants.STATUS_201,TransactionsConstants.MESSAGE_201));

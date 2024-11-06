@@ -51,10 +51,11 @@ public class TransactionsService {
      *
      * @param transaction         to add
      * @param transactionsInfoDto
+     * @param correlationId
      */
-    public void saveTransaction(Transactions transaction, TransactionsInfoDto transactionsInfoDto){
+    public void saveTransaction(Transactions transaction, TransactionsInfoDto transactionsInfoDto, String correlationId){
         checkLuhnValidetor(transaction);
-        checkForFraud(transaction,transactionsInfoDto);
+        checkForFraud(transaction,transactionsInfoDto,correlationId);
         transaction.setMaskCreditCard(Utils.mask(transaction.getCreditCard()));
         transaction.setCreditCard(Utils.maskCreditCard(transaction.getCreditCard()));
         transactionsRepository.save(transaction);
@@ -65,12 +66,13 @@ public class TransactionsService {
      *
      * @param transaction         to check
      * @param transactionsInfoDto
+     * @param correlationId
      */
-    private void checkForFraud(Transactions transaction, TransactionsInfoDto transactionsInfoDto) {
-        checkForBlackList(transaction.getCreditCard());
+    private void checkForFraud(Transactions transaction, TransactionsInfoDto transactionsInfoDto, String correlationId) {
+        checkForBlackList(transaction.getCreditCard(),correlationId);
         List<Transactions> transactionsToday = findByCreditCardAndDate(transaction);
-        checkTransactionsPerADay(transactionsToday,transaction,transactionsInfoDto);
-        checkAmountPerADay(transaction, transactionsToday,transactionsInfoDto);
+        checkTransactionsPerADay(transactionsToday,transaction,transactionsInfoDto,correlationId);
+        checkAmountPerADay(transaction, transactionsToday,transactionsInfoDto,correlationId);
     }
 
     /**
@@ -79,11 +81,12 @@ public class TransactionsService {
      * @param transaction         to be checked
      * @param transactionsToday   a list aof all transactions for a specific day
      * @param transactionsInfoDto
+     * @param correlationId
      */
-    private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday, TransactionsInfoDto transactionsInfoDto) {
+    private void checkAmountPerADay(Transactions transaction, List<Transactions> transactionsToday, TransactionsInfoDto transactionsInfoDto, String correlationId) {
         double sum = 0;
         if(transaction.getAmount() >= transactionsInfoDto.getMaxAmountPerADay()) {
-            addCardToBlackList(transaction.getCreditCard());
+            addCardToBlackList(transaction.getCreditCard(), correlationId);
             throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
         }
         if(!transactionsToday.isEmpty()) {
@@ -92,7 +95,7 @@ public class TransactionsService {
             }
             sum = sum + transaction.getAmount();
             if (sum >= transactionsInfoDto.getMaxAmountPerADay()) {
-                addCardToBlackList(transaction.getCreditCard());
+                addCardToBlackList(transaction.getCreditCard(), correlationId);
                 throw new FraudException("transactions is not valid , card passed his max amount per a day  ");
             }
         }
@@ -104,22 +107,25 @@ public class TransactionsService {
      * @param transactionsToday   a list aof all transactions for a specific day
      * @param transaction         to be checked
      * @param transactionsInfoDto
+     * @param correlationId
      */
-    private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction, TransactionsInfoDto transactionsInfoDto) {
+    private void checkTransactionsPerADay(List<Transactions> transactionsToday, Transactions transaction, TransactionsInfoDto transactionsInfoDto, String correlationId) {
         if(transactionsToday.size()+1 > transactionsInfoDto.getMaxTrsnsactionsPerADAy()) {
-            addCardToBlackList(transaction.getCreditCard());
+            addCardToBlackList(transaction.getCreditCard(),correlationId);
             throw new FraudException("transactions is not valid , card passed his max transactions per a day");
         }
     }
 
     /**
      * add credit card to black list table
+     *
      * @param creditCardNumber to add to black list
+     * @param correlationId
      */
-    private void addCardToBlackList(String creditCardNumber) {
+    private void addCardToBlackList(String creditCardNumber, String correlationId) {
         BlackListDto blackListDto = new BlackListDto();
         blackListDto.setCreditCard(creditCardNumber);
-        blackListProxy.createBlackListCard(blackListDto);
+        blackListProxy.createBlackListCard(correlationId,blackListDto);
     }
 
     /**
@@ -134,10 +140,12 @@ public class TransactionsService {
 
     /**
      * check if the credit card number is in the black list DB
-     * @param creditCard credit card number
+     *
+     * @param creditCard    credit card number
+     * @param correlationId
      */
-    private void checkForBlackList(String creditCard) {
-        if(blackListProxy.checkIfCreditCradAllReadyExist(creditCard)){
+    private void checkForBlackList(String creditCard, String correlationId) {
+        if(blackListProxy.checkIfCreditCradAllReadyExist(correlationId,creditCard)){
             throw new FraudException("transactions is not valid , card was found in black list !!!");
         }
     }
