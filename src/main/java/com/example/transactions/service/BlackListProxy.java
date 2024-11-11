@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "black-list-service")
+@FeignClient(name = "black-list-service", fallback = BlackListFallback.class)
 public interface BlackListProxy {
 
     @GetMapping("api/checkBlacklist")
