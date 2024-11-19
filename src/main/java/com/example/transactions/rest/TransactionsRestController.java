@@ -6,6 +6,7 @@ import com.example.transactions.dto.ResponseDto;
 import com.example.transactions.dto.TransactionsInfoDto;
 import com.example.transactions.entity.Transactions;
 import com.example.transactions.service.TransactionsService;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
 @Tag(
         name = "CRUD REST APIs for transactions ",
@@ -221,10 +223,20 @@ public class TransactionsRestController {
             )
     }
     )
+
+    @Retry(name = "getTransactionsInfoDto" , fallbackMethod = "getTransactionsInfoDtoFallback")
     @GetMapping("/transactions-info")
-    public ResponseEntity<TransactionsInfoDto> getTransactionsInfoDto() {
+    public ResponseEntity<TransactionsInfoDto> getTransactionsInfoDto(){
+        logger.debug("getTransactionsInfoDto() method Invoked");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(transactionsInfoDto);
+    }
+
+    public ResponseEntity<String> getTransactionsInfoDtoFallback(Throwable throwable) {
+        logger.debug("getBuildInfoFallback() method Invoked");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("0.9");
     }
 }
