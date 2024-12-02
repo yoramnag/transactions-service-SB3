@@ -151,8 +151,9 @@ public class TransactionsRestController {
     @PostMapping("/saveTransaction")
     public ResponseEntity<ResponseDto> createTransaction(@RequestHeader("creditCard-correlation-id") String correlationId,
                                                          @Valid @RequestBody Transactions transaction){
-        logger.debug("creditCard-correlation-id found {}",correlationId);
+        logger.debug("createTransaction start");
         transactionsService.saveTransaction(transaction,transactionsInfoDto,correlationId);
+        logger.debug("createTransaction end");
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new ResponseDto(TransactionsConstants.STATUS_201,TransactionsConstants.MESSAGE_201));

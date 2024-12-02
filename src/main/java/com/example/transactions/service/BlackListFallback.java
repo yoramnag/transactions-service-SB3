@@ -1,6 +1,5 @@
 package com.example.transactions.service;
 
-import com.example.transactions.exception.FraudException;
 import com.example.transactions.exception.ServiceUnavailableException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
